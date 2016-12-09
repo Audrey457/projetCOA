@@ -23,7 +23,7 @@ public class Tableau implements Map<String,Valeurs>{
 
     @Override
     public boolean isEmpty() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return false;
     }
 
     @Override
