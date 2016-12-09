@@ -4,18 +4,14 @@
  * and open the template in the editor.
  */
 
-package modelisation;
+package model;
+
+import java.util.ArrayList;
+
 /**
  *
  * @author lalleaul
  */
-public class Modelisation {
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        // TODO code application logic here
-    }
+class Valeurs extends ArrayList<Double>{
     
 }
