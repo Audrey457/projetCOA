@@ -7,10 +7,11 @@ package vue;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
-import model.TableauModele;
+import model.SerieChro;
 
 /**
  *
@@ -29,8 +30,14 @@ public class Fenetre extends JFrame{
                 tab[i][j] = i + j;
             }
         }
-        
-        TableauModele tab2 = new TableauModele(tab, 10, 10);
+        ArrayList<String>col1=new ArrayList<String>();
+        ArrayList<Double>col2=new ArrayList<Double>();
+        col1.add("jan");
+        col1.add("fev");
+        col1.add("mar");
+        col2.add(2.2);
+
+        SerieChro tab2 = new SerieChro("date", "prix", col1, col2);
         VueTableau vueTab = new VueTableau(tab2);
         
         setPreferredSize(new Dimension(500, 400));

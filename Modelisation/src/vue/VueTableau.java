@@ -8,8 +8,7 @@ package vue;
 import controlleur.Controleur;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
-import model.Tableau;
-import model.TableauModele;
+import model.SerieChro;
 
 /**
  *
@@ -17,10 +16,10 @@ import model.TableauModele;
  */
 public class VueTableau extends JTable {
     
-    TableauModele tab2;
+    SerieChro tab2;
     public VueTableau(TableModel tab2){
         super(tab2);
-        this.tab2 = (TableauModele)tab2;
+        this.tab2 = (SerieChro)tab2;
     }
     
 }
