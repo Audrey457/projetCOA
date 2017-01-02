@@ -5,6 +5,7 @@
  */
 
 package modelisation;
+import vue.*;
 /**
  *
  * @author lalleaul
@@ -15,7 +16,11 @@ public class Modelisation {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        javax.swing.SwingUtilities.invokeLater(new Runnable() {
+            public void run(){
+                new Fenetre();
+            }
+        });
     }
     
 }

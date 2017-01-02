@@ -1,5 +1,6 @@
 package model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
@@ -9,7 +10,7 @@ import javax.swing.table.AbstractTableModel;
  * 
  * @author utilisateur
  */
-public class SerieChro extends AbstractTableModel {
+public class SerieChro extends AbstractTableModel implements Serializable {
     
     /**
      * Attributs
