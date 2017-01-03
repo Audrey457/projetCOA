@@ -28,8 +28,10 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
-import model.SerieChro;
+import model.Ligne;
+import model.SerieChro2;
 
 /**
  *
@@ -38,7 +40,7 @@ import model.SerieChro;
 public class Fenetre extends JFrame{
     
     private JPanel affich;
-    private SerieChro tab;
+    private SerieChro2 serieChro;
     private VueTableau vueTab;
     private JButton donnees, plugins, undo, redo, envoiParam, choixAffich, quit, sauver;
     private JTextField param;
@@ -91,8 +93,8 @@ public class Fenetre extends JFrame{
             "-autocorrélation des résidus"};
         choixOpe = new JComboBox(textCombo); 
         indicParam = new JLabel("Indiquez paramètre numérique :");
-        tab = new SerieChro();
-        vueTab = new VueTableau(tab);
+        serieChro = new SerieChro2();
+        vueTab = new VueTableau(serieChro);
         fc = new JFileChooser();
     }
     
@@ -239,7 +241,7 @@ public class Fenetre extends JFrame{
         choixOpe.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                chargerDonneesActionPerformed(evt);
+                //a faire
             }
         });
         
@@ -260,7 +262,7 @@ public class Fenetre extends JFrame{
         quit.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                //a faire
+                quitActionPerformed(evt);
             }
         });
         
@@ -282,7 +284,7 @@ public class Fenetre extends JFrame{
             try{
                 fis = new FileInputStream(fc.getSelectedFile().getPath());
                 ois = new ObjectInputStream(fis);
-                this.tab = (SerieChro)ois.readObject();
+                this.serieChro = (SerieChro2)ois.readObject();
                 fis.close();
                 ois.close();
             }
@@ -317,7 +319,7 @@ public class Fenetre extends JFrame{
             try{
                 fich = new FileOutputStream(nomFich);
                 oos = new ObjectOutputStream(fich);
-                oos.writeObject(this.tab);
+                oos.writeObject(this.serieChro);
                 fich.close();
                 oos.close();
             }
@@ -335,15 +337,21 @@ public class Fenetre extends JFrame{
     }
     
     private void chargerEssai(){
-        ArrayList<String> a1 = new ArrayList<>();
-        ArrayList<Double> a2 = new ArrayList<>();
-        a1.add("jan");
-        a1.add("fev");
-        a2.add(1.20);
-        a2.add(3.40);
-        tab.setEntete1("entete1");
-        tab.setEntete2("entete2");
-        tab.setCol1(a1);
-        tab.setCol2(a2);
+        ArrayList<Ligne> lignes = new ArrayList<>();
+        Ligne lig1 = new Ligne("janv", 0.2569);
+        Ligne lig2 = new Ligne("fev", 1.1458);
+        Ligne lig3 = new Ligne("mar", 2.369);
+        
+        lignes.add(lig1);
+        lignes.add(lig2);
+        lignes.add(lig3);
+        
+        serieChro.setEnsLignes(lignes);
+        JScrollPane sp = new JScrollPane(vueTab);
+        affich.add(sp);
+    }
+    
+    private void quitActionPerformed(ActionEvent evt){
+        this.dispose();
     }
 }
