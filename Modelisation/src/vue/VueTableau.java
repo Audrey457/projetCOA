@@ -5,21 +5,16 @@
  */
 package vue;
 
-import controlleur.Controleur;
 import javax.swing.JTable;
 import javax.swing.table.TableModel;
 import model.SerieChro;
+import model.SerieChro2;
 
-/**
- *
- * @author utilisateur
- */
 public class VueTableau extends JTable {
     
-    SerieChro tab2;
-    public VueTableau(TableModel tab2){
-        super(tab2);
-        this.tab2 = (SerieChro)tab2;
+    SerieChro2 tab;
+    public VueTableau(TableModel tab){
+        super(tab);
+        this.tab = (SerieChro2)tab;
     }
-    
 }
