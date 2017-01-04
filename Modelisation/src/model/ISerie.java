@@ -14,4 +14,5 @@ public interface ISerie {
     public String[] getEntetes();
     public void setEnsLignes(ArrayList<Ligne> ensLignes);
     public ArrayList<Double> getAllValues();
+    public int getRowCount();
 }
