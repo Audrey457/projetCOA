@@ -1,15 +1,15 @@
 
 package controlleur;
 
-import model.SerieChro2;
+import model.SerieToUse;
 import vue.VueTableau;
 
 public class SerieControleur {
-	private SerieChro2 serie;
+	private SerieToUse serie;
 	private VueTableau vue;
 	private ImportSerie importserie = new ImportSerieCSV();
 
-	public SerieControleur(SerieChro2 model) {
+	public SerieControleur(SerieToUse model) {
 		serie = model;
 	}
 

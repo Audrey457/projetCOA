@@ -6,7 +6,7 @@
 
 package controlleur.plugins;
 
-import model.SerieChro;
+import model.ISerie;
 
 /**
  *
@@ -14,5 +14,6 @@ import model.SerieChro;
  */
 public interface PluginTraitement extends PluginBase{
     
-    public double getValue(SerieChro serie)throws Exception;
+    public double getValue(ISerie serie)throws Exception;
+    
 }

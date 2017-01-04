@@ -6,19 +6,20 @@
 package model;
 
 import java.util.ArrayList;
-import javax.swing.table.AbstractTableModel;
+import java.util.Observable;
+import javax.swing.event.TableModelListener;
 
 
-public class SerieChro2 extends AbstractTableModel {
+public class SerieToUse extends Observable implements ISerie{
 
     private final String[] entetes = {"Date", "Valeur"};
     private ArrayList<Ligne> ensLignes;
     
-    public SerieChro2(){
-        ensLignes = null;
+    public SerieToUse(){
+        ensLignes = new ArrayList<>();
     }
     
-    public SerieChro2(ArrayList<Ligne> ensLignes){
+    public SerieToUse(ArrayList<Ligne> ensLignes){
         this.ensLignes = ensLignes;
     }
     
@@ -64,5 +65,40 @@ public class SerieChro2 extends AbstractTableModel {
             default:
                 throw new IllegalArgumentException();
         }
-    }   
+    }  
+
+    //Pour recuperer la 2ème colonne du tableau
+    @Override
+    public ArrayList<Double> getAllValues() {
+        ArrayList<Double> resultat = new ArrayList<>();
+        for(Ligne l: this.ensLignes){
+            resultat.add(l.getValeur());
+        }
+        return resultat;
+    }
+
+    @Override
+    public Class<?> getColumnClass(int columnIndex) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean isCellEditable(int arg0, int arg1) {
+        return false;
+    }
+
+    @Override
+    public void setValueAt(Object arg0, int arg1, int arg2) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public void addTableModelListener(TableModelListener l) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
+
+    @Override
+    public void removeTableModelListener(TableModelListener l) {
+        throw new UnsupportedOperationException("Not supported yet."); 
+    }
 }

@@ -33,7 +33,7 @@ import javax.swing.JTextField;
 
 import controlleur.SerieControleur;
 import model.Ligne;
-import model.SerieChro2;
+import model.SerieToUse;
 
 /**
  *
@@ -43,7 +43,7 @@ public class Fenetre extends JFrame {
 
 	private SerieControleur controller;
 	private JPanel affich;
-	private SerieChro2 serieChro;
+	private SerieToUse serieChro;
 	private VueTableau vueTab;
 	private JButton donnees, plugins, undo, redo, envoiParam, choixAffich, quit, sauver;
 	private JTextField param;
@@ -86,7 +86,7 @@ public class Fenetre extends JFrame {
 				"-graphe des résidus", "-variance résiduelle", "-autocorrélation des résidus" };
 		choixOpe = new JComboBox(textCombo);
 		indicParam = new JLabel("Indiquez paramètre numérique :");
-		serieChro = new SerieChro2();
+		serieChro = new SerieToUse();
 		vueTab = new VueTableau(serieChro);
 		fc = new JFileChooser();
 		controller = new SerieControleur(serieChro);

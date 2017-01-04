@@ -5,7 +5,7 @@
  */
 
 package modelisation;
-import vue.*;
+import vue.Fenetre;
 /**
  *
  * @author lalleaul
