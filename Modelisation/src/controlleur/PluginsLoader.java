@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import controlleur.plugins.*; 
+import controlleur.plugins.*;
 
 /**
  * Classe gérant le chargement et la validation des plugins
@@ -20,6 +20,9 @@ import controlleur.plugins.*;
  *
  */
 public class PluginsLoader {
+
+    private final String ITRAITEMENT = "controlleur.plugins.PluginTraitement";
+    private final String ITRANSFORMATION = "controlleur.plugins.PluginTransformation";
 
     private ArrayList<String> files;
 
@@ -105,6 +108,7 @@ public class PluginsLoader {
 
         // Pour éviter le double chargement des plugins
         if (this.classPluginsTransformation.size() != 0 || this.classPluginsTraitement.size() != 0) {
+            System.out.println("Plugins déjà chargé");
             return;
         }
 
@@ -123,6 +127,8 @@ public class PluginsLoader {
             f[index] = new File(this.files.get(index));
 
             if (!f[index].exists()) {
+
+                System.out.println(f[index].getAbsolutePath()+ " n'existe pas");
                 break;
             }
 
@@ -151,12 +157,11 @@ public class PluginsLoader {
 
                     for (int i = 0; i < tmpClass.getInterfaces().length; i++) {
 
-
                         if (tmpClass.getInterfaces()[i].getName().toString()
-                                .equals("model.plugins.PluginTraitement")) {
+                                .equals(this.ITRAITEMENT)) {
                             this.classPluginsTraitement.add(tmpClass);
                         } else if (tmpClass.getInterfaces()[i].getName().toString()
-                                .equals("model.plugins.PluginTransformation")) {
+                                .equals(this.ITRANSFORMATION)) {
                             this.classPluginsTransformation.add(tmpClass);
                         }
                     }

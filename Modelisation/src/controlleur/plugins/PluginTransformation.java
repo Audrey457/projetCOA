@@ -5,7 +5,7 @@
  */
 package controlleur.plugins;
 
-import model.SerieChro;
+import model.ISerie;
 
 /**
  *
@@ -20,7 +20,7 @@ public interface PluginTransformation extends PluginBase {
      * @param serie
      * @return Nouvelle serie transformée
      */
-    public SerieChro transform(SerieChro serie);
+    public ISerie transform(ISerie serie);
     
     
 }
