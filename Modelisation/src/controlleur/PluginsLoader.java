@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
-import model.plugins.*; 
+import controlleur.plugins.*; 
 
 /**
  * Classe gérant le chargement et la validation des plugins
