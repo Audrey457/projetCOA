@@ -1,7 +1,7 @@
 package vue;
 
-import model.Tableau;
+//import model.Tableau;
 
 public class AffCourbe {
-    Tableau tab;
+    //Tableau tab;
 }
