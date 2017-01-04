@@ -9,13 +9,13 @@ import java.util.ArrayList;
 import javax.swing.table.AbstractTableModel;
 
 
-public class SerieChro2 extends AbstractTableModel {
+public class SerieChro2 extends AbstractTableModel implements ISerie{
 
     private final String[] entetes = {"Date", "Valeur"};
     private ArrayList<Ligne> ensLignes;
     
     public SerieChro2(){
-        ensLignes = null;
+        ensLignes = new ArrayList<>();
     }
     
     public SerieChro2(ArrayList<Ligne> ensLignes){
@@ -64,5 +64,15 @@ public class SerieChro2 extends AbstractTableModel {
             default:
                 throw new IllegalArgumentException();
         }
-    }   
+    }  
+
+    //Pour recuperer la 2ème colonne du tableau
+    @Override
+    public ArrayList<Double> getAllValues() {
+        ArrayList<Double> resultat = new ArrayList<>();
+        for(Ligne l: this.ensLignes){
+            resultat.add(l.getValeur());
+        }
+        return resultat;
+    }
 }
