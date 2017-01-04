@@ -7,8 +7,9 @@
 package model;
 
 import java.util.ArrayList;
+import javax.swing.table.TableModel;
 
-public interface ISerie {
+public interface ISerie extends TableModel {
     public ArrayList<Ligne> getEnsLignes();
     public void modifierValeur(double valeur, int ligne);
     public String[] getEntetes();
