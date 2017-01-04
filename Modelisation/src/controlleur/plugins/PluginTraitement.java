@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-package model.plugins;
+package controlleur.plugins;
 
 import model.SerieChro;
 
@@ -14,5 +14,5 @@ import model.SerieChro;
  */
 public interface PluginTraitement extends PluginBase{
     
-    public double getValue(SerieChro serie);
+    public double getValue(SerieChro serie)throws Exception;
 }
