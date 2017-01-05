@@ -2,11 +2,11 @@
 package controlleur;
 
 import model.SerieToUse;
-import vue.VueTableau;
+import vue.Fenetre;
 
 public class SerieControleur {
 	private SerieToUse serie;
-	private VueTableau vue;
+	private Fenetre vue;
 	private ImportSerie importserie = new ImportSerieCSV();
 
 	public SerieControleur(SerieToUse model) {
@@ -19,7 +19,7 @@ public class SerieControleur {
 
 	// utile pour faire un éventuel control de données et l'afficher seulement
 	// sur la vue
-	public void addView(VueTableau vue) {
+	public void addView(Fenetre vue) {
 		this.vue = vue;
 	}
 }

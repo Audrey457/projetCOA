@@ -29,22 +29,19 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import controlleur.SerieControleur;
 import model.Ligne;
 import model.SerieToUse;
 
-/**
- *
- * @author utilisateur
- */
 public class Fenetre extends JFrame {
 
 	private SerieControleur controller;
 	private JPanel affich;
 	private SerieToUse serieChro;
-	private VueTableau vueTab;
+	private JTable vueTab;
 	private JButton donnees, plugins, undo, redo, envoiParam, choixAffich, quit, sauver;
 	private JTextField param;
 	private JComboBox choixOpe;
@@ -87,7 +84,7 @@ public class Fenetre extends JFrame {
 		choixOpe = new JComboBox(textCombo);
 		indicParam = new JLabel("Indiquez paramètre numérique :");
 		serieChro = new SerieToUse();
-		vueTab = new VueTableau(serieChro);
+		vueTab = new JTable(serieChro);
 		fc = new JFileChooser();
 		controller = new SerieControleur(serieChro);
 	}
