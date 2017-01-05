@@ -33,6 +33,8 @@ public class SerieToUse extends Observable implements ISerie {
 	public void modifierValeur(double valeur, int ligne) {
 		Ligne temp = new Ligne(ensLignes.get(ligne).getValDate(), valeur);
 		ensLignes.set(ligne, temp);
+		this.setChanged();
+		this.notifyObservers("serieChange");
 	}
 
 	public String[] getEntetes() {
@@ -41,6 +43,8 @@ public class SerieToUse extends Observable implements ISerie {
 
 	public void setEnsLignes(ArrayList<Ligne> ensLignes) {
 		this.ensLignes = ensLignes;
+		this.setChanged();
+		this.notifyObservers("serieChange");
 	}
 
 	@Override
