@@ -9,10 +9,11 @@ import java.util.ArrayList;
 import model.Ligne;
 
 public class ImportSerieCSV implements ImportSerie {
-	private ArrayList<Ligne> ensLignes = new ArrayList<>();
+	private ArrayList<Ligne> ensLignes;
 	String[] ligne;
 
 	public ArrayList<Ligne> importerSerie(String chemin) {
+		ensLignes = new ArrayList<>();
 		try {
 			BufferedReader fichier = new BufferedReader(new FileReader(chemin));
 			String chaine;

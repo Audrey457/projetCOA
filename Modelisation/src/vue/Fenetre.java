@@ -270,9 +270,11 @@ public class Fenetre extends JFrame {
 			// fis.close();
 			// ois.close();
 			controller.fixeSerie(fc.getSelectedFile().getPath());
+			serieChro.fireTableStructureChanged();
 
-			JScrollPane sp = new JScrollPane(vueTab);
-			affich.add(sp);
+			// JScrollPane sp = new JScrollPane(vueTab);
+			// affich.add(sp);
+
 			// } catch (FileNotFoundException fnfe) {
 			// System.out.println("Erreur lors du chargement de la série " +
 			// fnfe.getMessage());
