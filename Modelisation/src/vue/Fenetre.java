@@ -77,7 +77,7 @@ public class Fenetre extends JFrame implements Observer {
 		undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
 		redo = new JButton(new ImageIcon(getClass().getResource("/images/redo.png")));
 		envoiParam = new JButton("Ok");
-		choixAffichTab = new JButton("Graph");
+		choixAffichTab = new JButton("Tableau");
                 choixAffichCourbe = new JButton("Courbe");
 		quit = new JButton("quitter");
 		sauver = new JButton("Sauvegarder état actuel");
@@ -164,7 +164,8 @@ public class Fenetre extends JFrame implements Observer {
 		affich.setPreferredSize(new Dimension(1100, 600));
 		affich.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		affich.add(vueTab);
+                JScrollPane sp = new JScrollPane(vueTab);
+                affich.add(sp);
 
 		// panneau du bas
 		JPanel bas = new JPanel();
@@ -248,7 +249,7 @@ public class Fenetre extends JFrame implements Observer {
 		choixAffichTab.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				// a faire
+                            choixAffichTabActionPerformed(evt);
 			}
 		});
                 
@@ -274,6 +275,20 @@ public class Fenetre extends JFrame implements Observer {
 		});
 
 	}
+        
+        private void choixAffichTabActionPerformed(ActionEvent e){
+            ArrayList<Ligne> lignes = new ArrayList<>();
+                Ligne lig1 = new Ligne("janv", 0.2569);
+		Ligne lig2 = new Ligne("fev", 1.1458);
+		Ligne lig3 = new Ligne("mar", 2.369);
+
+		lignes.add(lig1);
+		lignes.add(lig2);
+		lignes.add(lig3);
+            serie.setEnsLignes(lignes);
+            serie.fireTableStructureChanged();
+                
+        }
 
 	private void chargerDonneesActionPerformed(ActionEvent e) {
 		int retourneVal = fc.showOpenDialog(this);
@@ -308,18 +323,7 @@ public class Fenetre extends JFrame implements Observer {
 	}
 
 	private void chargerEssai() {
-		ArrayList<Ligne> lignes = new ArrayList<>();
-		Ligne lig1 = new Ligne("janv", 0.2569);
-		Ligne lig2 = new Ligne("fev", 1.1458);
-		Ligne lig3 = new Ligne("mar", 2.369);
-
-		lignes.add(lig1);
-		lignes.add(lig2);
-		lignes.add(lig3);
-
-		serie.setEnsLignes(lignes);
-		JScrollPane sp = new JScrollPane(vueTab);
-		affich.add(sp);
+		
                 
         }
 
