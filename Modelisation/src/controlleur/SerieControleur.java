@@ -1,6 +1,8 @@
 
 package controlleur;
 
+import javax.swing.JOptionPane;
+
 import model.SerieToUse;
 import vue.Fenetre;
 
@@ -14,7 +16,11 @@ public class SerieControleur {
 	}
 
 	public void fixeSerie(String chemin) {
-		serie.setEnsLignes(importserie.importerSerie(chemin));
+		if (!chemin.substring(chemin.indexOf('.') + 1).equals("csv")) {
+			JOptionPane.showMessageDialog(vue, "Fichier incorrect.", "Erreur format", JOptionPane.ERROR_MESSAGE);
+		} else {
+			serie.setEnsLignes(importserie.importerSerie(chemin));
+		}
 	}
 
 	// utile pour faire un éventuel control de données et l'afficher seulement

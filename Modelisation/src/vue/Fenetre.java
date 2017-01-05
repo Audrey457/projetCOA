@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
+import java.util.Observable;
+import java.util.Observer;
+
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -36,11 +39,11 @@ import controlleur.SerieControleur;
 import model.Ligne;
 import model.SerieToUse;
 
-public class Fenetre extends JFrame {
+public class Fenetre extends JFrame implements Observer {
 
-	private SerieControleur controller;
+	private SerieControleur controleur;
 	private JPanel affich;
-	private SerieToUse serieChro;
+	private SerieToUse serie;
 	private JTable vueTab;
 	private JButton donnees, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver;
 	private JTextField param;
@@ -48,8 +51,11 @@ public class Fenetre extends JFrame {
 	private JLabel indicParam;
 	private JFileChooser fc;
 
-	public Fenetre() {
+	public Fenetre(SerieToUse serie, SerieControleur controleur) {
 		super();
+		this.serie = serie;
+		this.controleur = controleur;
+		serie.addObserver(this);
 		setTitle("logiGest");
 		this.getContentPane().setLayout(new BoxLayout(this.getContentPane(), BoxLayout.LINE_AXIS));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -84,10 +90,8 @@ public class Fenetre extends JFrame {
 				"-graphe des résidus", "-variance résiduelle", "-autocorrélation des résidus" };
 		choixOpe = new JComboBox(textCombo);
 		indicParam = new JLabel("Indiquez paramètre numérique :");
-		serieChro = new SerieToUse();
-		vueTab = new JTable(serieChro);
+		vueTab = new JTable(serie);
 		fc = new JFileChooser();
-		controller = new SerieControleur(serieChro);
 	}
 
 	// positionnement de tous les elements dans la fenetre principale
@@ -273,35 +277,8 @@ public class Fenetre extends JFrame {
 
 	private void chargerDonneesActionPerformed(ActionEvent e) {
 		int retourneVal = fc.showOpenDialog(this);
-
 		if (retourneVal == JFileChooser.APPROVE_OPTION) {
-			FileInputStream fis;
-			ObjectInputStream ois;
-			// try {
-			// fis = new FileInputStream(fc.getSelectedFile().getPath());
-			// ois = new ObjectInputStream(fis);
-			// this.serieChro = (SerieChro2) ois.readObject();
-			// fis.close();
-			// ois.close();
-			controller.fixeSerie(fc.getSelectedFile().getPath());
-
-			JScrollPane sp = new JScrollPane(vueTab);
-			affich.add(sp);
-			// } catch (FileNotFoundException fnfe) {
-			// System.out.println("Erreur lors du chargement de la série " +
-			// fnfe.getMessage());
-			// } catch (IOException ioe) {
-			// System.out.println("Erreur lors du chargement de la série " +
-			// ioe.getMessage());
-			// } catch (ClassNotFoundException cnfe) {
-			// System.out.println("Erreur lors du chargement de la série " +
-			// cnfe.getMessage());
-			// }
-			// } else {
-
-			// JOptionPane.showMessageDialog(this, "Vous n'avez rien
-			// sélectionné.");
-
+			controleur.fixeSerie(fc.getSelectedFile().getPath());
 		}
 	}
 
@@ -317,7 +294,7 @@ public class Fenetre extends JFrame {
 			try {
 				fich = new FileOutputStream(nomFich);
 				oos = new ObjectOutputStream(fich);
-				oos.writeObject(this.serieChro);
+				oos.writeObject(this.serie);
 				fich.close();
 				oos.close();
 			} catch (FileNotFoundException fnfe) {
@@ -340,7 +317,7 @@ public class Fenetre extends JFrame {
 		lignes.add(lig2);
 		lignes.add(lig3);
 
-		serieChro.setEnsLignes(lignes);
+		serie.setEnsLignes(lignes);
 		JScrollPane sp = new JScrollPane(vueTab);
 		affich.add(sp);
                 
@@ -348,5 +325,13 @@ public class Fenetre extends JFrame {
 
 	private void quitActionPerformed(ActionEvent evt) {
 		this.dispose();
+	}
+
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		if (arg1.equals("serieChange")) {
+			serie.fireTableStructureChanged();
+		}
+
 	}
 }

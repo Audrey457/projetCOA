@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 import javax.swing.event.EventListenerList;
+import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 
 public class SerieToUse extends Observable implements ISerie {
@@ -32,6 +33,8 @@ public class SerieToUse extends Observable implements ISerie {
 	public void modifierValeur(double valeur, int ligne) {
 		Ligne temp = new Ligne(ensLignes.get(ligne).getValDate(), valeur);
 		ensLignes.set(ligne, temp);
+		this.setChanged();
+		this.notifyObservers("serieChange");
 	}
 
 	public String[] getEntetes() {
@@ -40,6 +43,8 @@ public class SerieToUse extends Observable implements ISerie {
 
 	public void setEnsLignes(ArrayList<Ligne> ensLignes) {
 		this.ensLignes = ensLignes;
+		this.setChanged();
+		this.notifyObservers("serieChange");
 	}
 
 	@Override
@@ -101,5 +106,20 @@ public class SerieToUse extends Observable implements ISerie {
 	@Override
 	public void removeTableModelListener(TableModelListener l) {
 		listenerList.remove(TableModelListener.class, l);
+	}
+
+	public void fireTableChanged(TableModelEvent event) {
+		int index;
+		TableModelListener listener;
+		Object[] list = listenerList.getListenerList();
+
+		for (index = 0; index < list.length; index += 2) {
+			listener = (TableModelListener) list[index + 1];
+			listener.tableChanged(event);
+		}
+	}
+
+	public void fireTableStructureChanged() {
+		fireTableChanged(new TableModelEvent(this, TableModelEvent.HEADER_ROW));
 	}
 }
