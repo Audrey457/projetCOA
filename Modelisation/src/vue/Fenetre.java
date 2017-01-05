@@ -42,7 +42,7 @@ public class Fenetre extends JFrame {
 	private JPanel affich;
 	private SerieToUse serieChro;
 	private JTable vueTab;
-	private JButton donnees, plugins, undo, redo, envoiParam, choixAffich, quit, sauver;
+	private JButton donnees, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver;
 	private JTextField param;
 	private JComboBox choixOpe;
 	private JLabel indicParam;
@@ -71,7 +71,8 @@ public class Fenetre extends JFrame {
 		undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
 		redo = new JButton(new ImageIcon(getClass().getResource("/images/redo.png")));
 		envoiParam = new JButton("Ok");
-		choixAffich = new JButton("Graph / Tableau");
+		choixAffichTab = new JButton("Graph");
+                choixAffichCourbe = new JButton("Courbe");
 		quit = new JButton("quitter");
 		sauver = new JButton("Sauvegarder état actuel");
 		param = new JTextField("Saisie paramètre");
@@ -165,18 +166,24 @@ public class Fenetre extends JFrame {
 		JPanel bas = new JPanel();
 		bas.setLayout(new BoxLayout(bas, BoxLayout.PAGE_AXIS));
 		bas.setPreferredSize(new Dimension(1100, 200));
-		choixAffich.setAlignmentY(Component.TOP_ALIGNMENT);
+		choixAffichTab.setAlignmentY(Component.TOP_ALIGNMENT);
+                choixAffichCourbe.setAlignmentY(Component.TOP_ALIGNMENT);
+                choixAffichTab.setAlignmentX(Component.CENTER_ALIGNMENT);
+                choixAffichCourbe.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JPanel ctnSaveQuit = new JPanel();
+                JPanel ctnChoix = new JPanel();
 		ctnSaveQuit.setLayout(new BoxLayout(ctnSaveQuit, BoxLayout.LINE_AXIS));
-
-		ctnSaveQuit.add(Box.createRigidArea(new Dimension(500, 0)));
+		ctnSaveQuit.add(Box.createRigidArea(new Dimension(400, 0)));
 		ctnSaveQuit.add(sauver);
 		ctnSaveQuit.add(Box.createRigidArea(new Dimension(300, 0)));
+                ctnChoix.setLayout(new BoxLayout(ctnChoix, BoxLayout.LINE_AXIS));
 		quit.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		ctnSaveQuit.add(quit);
-		bas.add(Box.createRigidArea(new Dimension(0, 50)));
-		bas.add(choixAffich);
-		bas.add(Box.createRigidArea(new Dimension(0, 50)));
+		ctnChoix.add(Box.createRigidArea(new Dimension(0, 100)));
+		ctnChoix.add(choixAffichTab);
+                ctnChoix.add(Box.createRigidArea(new Dimension(10, 0)));
+                ctnChoix.add(choixAffichCourbe);
+                bas.add(ctnChoix);
 		bas.add(ctnSaveQuit);
 
 		JPanel droit = new JPanel();
@@ -234,7 +241,14 @@ public class Fenetre extends JFrame {
 			}
 		});
 
-		choixAffich.addActionListener(new ActionListener() {
+		choixAffichTab.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				// a faire
+			}
+		});
+                
+                choixAffichCourbe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				// a faire
