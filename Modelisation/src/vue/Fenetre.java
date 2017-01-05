@@ -332,7 +332,8 @@ public class Fenetre extends JFrame {
 		serieChro.setEnsLignes(lignes);
 		JScrollPane sp = new JScrollPane(vueTab);
 		affich.add(sp);
-	}
+                
+        }
 
 	private void quitActionPerformed(ActionEvent evt) {
 		this.dispose();
