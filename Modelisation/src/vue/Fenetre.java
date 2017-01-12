@@ -10,11 +10,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -36,19 +34,23 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import controlleur.SerieControleur;
+import java.awt.CardLayout;
 import model.Ligne;
 import model.SerieToUse;
 
 public class Fenetre extends JFrame implements Observer {
 
 	private SerieControleur controleur;
-	private JPanel affich;
+	private JPanel affich, cardAffichCourbe, cardAffichTab;
 	private SerieToUse serie;
 	private JTable vueTab;
-	private JButton donnees, plugins, undo, redo, envoiParam, choixAffich, quit, sauver;
+	private JButton donneesCSV, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver,
+			selectUrl;
 	private JTextField param;
+	private JTextField urlRessource;
 	private JComboBox choixOpe;
 	private JLabel indicParam;
+	private JLabel indicUrl;
 	private JFileChooser fc;
 
 	public Fenetre(SerieToUse serie, SerieControleur controleur) {
@@ -71,16 +73,21 @@ public class Fenetre extends JFrame implements Observer {
 	}
 
 	private void initialiser() {
-		affich = new JPanel();
-		donnees = new JButton("Charger données");
+		affich = new JPanel(new CardLayout());
+                cardAffichTab = new JPanel();
+                cardAffichCourbe = new JPanel();
+		donneesCSV = new JButton("Charger données depuis un fichier CSV");
 		plugins = new JButton("Charger plugin");
 		undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
 		redo = new JButton(new ImageIcon(getClass().getResource("/images/redo.png")));
 		envoiParam = new JButton("Ok");
-		choixAffich = new JButton("Graph / Tableau");
+		selectUrl = new JButton("Ok");
+		choixAffichTab = new JButton("Tableau");
+		choixAffichCourbe = new JButton("Courbe");
 		quit = new JButton("quitter");
 		sauver = new JButton("Sauvegarder état actuel");
 		param = new JTextField("Saisie paramètre");
+		urlRessource = new JTextField("ex : http://google.fr/fichier.csv");
 		String textCombo[] = { "Choisir opération :", "-transformation logarithme", "-transformation de Box-Cox",
 				"-transformation logistique", "-lissage à l'aide d'une moyenne mobile simple",
 				"-lissage à l'aide d'une moyenne mobile pondérée", "-estimation de la saisonnalité",
@@ -89,6 +96,7 @@ public class Fenetre extends JFrame implements Observer {
 				"-graphe des résidus", "-variance résiduelle", "-autocorrélation des résidus" };
 		choixOpe = new JComboBox(textCombo);
 		indicParam = new JLabel("Indiquez paramètre numérique :");
+		indicUrl = new JLabel("Indiquez l'url de la ressource en ligne :");
 		vueTab = new JTable(serie);
 		fc = new JFileChooser();
 	}
@@ -107,15 +115,25 @@ public class Fenetre extends JFrame implements Observer {
 		gauche.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-		// boutons charger donnees et plugins
+		// boutons charger donnees depuis CSV, charger donnees depuis URL et plugins
 		JPanel hautGauche = new JPanel();
 		hautGauche.setLayout(new BoxLayout(hautGauche, BoxLayout.PAGE_AXIS));
 		hautGauche.setPreferredSize(eachPanDim);
-		donnees.setAlignmentX(Component.LEFT_ALIGNMENT);
+		donneesCSV.setAlignmentX(Component.LEFT_ALIGNMENT);
 		plugins.setAlignmentX(Component.LEFT_ALIGNMENT);
-		hautGauche.add(donnees);
-		hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
 		hautGauche.add(plugins);
+		hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
+		hautGauche.add(donneesCSV);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
+                hautGauche.add(indicUrl);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 10)));
+                JPanel hautGaucheUrl= new JPanel(); 
+		hautGaucheUrl.setLayout(new BoxLayout(hautGaucheUrl, BoxLayout.LINE_AXIS));
+		hautGaucheUrl.setAlignmentX(Component.LEFT_ALIGNMENT);
+		hautGaucheUrl.add(urlRessource);
+		hautGaucheUrl.add(this.selectUrl);
+                hautGauche.add(hautGaucheUrl);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		// boutons undo redo
 		JPanel milieuGauche = new JPanel();
@@ -136,6 +154,7 @@ public class Fenetre extends JFrame implements Observer {
 		basGauche.add(Box.createRigidArea(new Dimension(0, 20)));
 		indicParam.setAlignmentX(Component.LEFT_ALIGNMENT);
 		basGauche.add(indicParam);
+		
 		// saisie parametre
 		JPanel basGaucheParam = new JPanel();
 		basGaucheParam.setLayout(new BoxLayout(basGaucheParam, BoxLayout.LINE_AXIS));
@@ -163,24 +182,33 @@ public class Fenetre extends JFrame implements Observer {
 		affich.setPreferredSize(new Dimension(1100, 600));
 		affich.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-		affich.add(vueTab);
+                JScrollPane sp = new JScrollPane(vueTab);
+                cardAffichTab.add(sp);
+                affich.add(cardAffichTab, "Tableau");
+                affich.add(cardAffichCourbe, "Courbe");
 
 		// panneau du bas
 		JPanel bas = new JPanel();
 		bas.setLayout(new BoxLayout(bas, BoxLayout.PAGE_AXIS));
 		bas.setPreferredSize(new Dimension(1100, 200));
-		choixAffich.setAlignmentY(Component.TOP_ALIGNMENT);
+		choixAffichTab.setAlignmentY(Component.TOP_ALIGNMENT);
+		choixAffichCourbe.setAlignmentY(Component.TOP_ALIGNMENT);
+		choixAffichTab.setAlignmentX(Component.CENTER_ALIGNMENT);
+		choixAffichCourbe.setAlignmentX(Component.CENTER_ALIGNMENT);
 		JPanel ctnSaveQuit = new JPanel();
+		JPanel ctnChoix = new JPanel();
 		ctnSaveQuit.setLayout(new BoxLayout(ctnSaveQuit, BoxLayout.LINE_AXIS));
-
-		ctnSaveQuit.add(Box.createRigidArea(new Dimension(500, 0)));
+		ctnSaveQuit.add(Box.createRigidArea(new Dimension(400, 0)));
 		ctnSaveQuit.add(sauver);
 		ctnSaveQuit.add(Box.createRigidArea(new Dimension(300, 0)));
+		ctnChoix.setLayout(new BoxLayout(ctnChoix, BoxLayout.LINE_AXIS));
 		quit.setAlignmentX(Component.RIGHT_ALIGNMENT);
 		ctnSaveQuit.add(quit);
-		bas.add(Box.createRigidArea(new Dimension(0, 50)));
-		bas.add(choixAffich);
-		bas.add(Box.createRigidArea(new Dimension(0, 50)));
+		ctnChoix.add(Box.createRigidArea(new Dimension(0, 100)));
+		ctnChoix.add(choixAffichTab);
+		ctnChoix.add(Box.createRigidArea(new Dimension(10, 0)));
+		ctnChoix.add(choixAffichCourbe);
+		bas.add(ctnChoix);
 		bas.add(ctnSaveQuit);
 
 		JPanel droit = new JPanel();
@@ -196,7 +224,7 @@ public class Fenetre extends JFrame implements Observer {
 
 	// ajout des listeners
 	private void ajouterListeners() {
-		donnees.addActionListener(new ActionListener() {
+		donneesCSV.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				chargerDonneesActionPerformed(evt);
@@ -238,10 +266,24 @@ public class Fenetre extends JFrame implements Observer {
 			}
 		});
 
-		choixAffich.addActionListener(new ActionListener() {
+		selectUrl.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				// a faire
+				controleur.fixeSerie(urlRessource.getText());
+			}
+		});
+
+		choixAffichTab.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				choixAffichTabActionPerformed(evt);
+			}
+		});
+
+		choixAffichCourbe.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent evt) {
+				choixAffichCourbeActionPerformed(evt);
 			}
 		});
 
@@ -260,6 +302,18 @@ public class Fenetre extends JFrame implements Observer {
 		});
 
 	}
+        
+        private void choixAffichTabActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Tableau");
+                
+        }
+        
+        private void choixAffichCourbeActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Courbe");
+                
+        }
 
 	private void chargerDonneesActionPerformed(ActionEvent e) {
 		int retourneVal = fc.showOpenDialog(this);
@@ -294,18 +348,7 @@ public class Fenetre extends JFrame implements Observer {
 	}
 
 	private void chargerEssai() {
-		ArrayList<Ligne> lignes = new ArrayList<>();
-		Ligne lig1 = new Ligne("janv", 0.2569);
-		Ligne lig2 = new Ligne("fev", 1.1458);
-		Ligne lig3 = new Ligne("mar", 2.369);
 
-		lignes.add(lig1);
-		lignes.add(lig2);
-		lignes.add(lig3);
-
-		serie.setEnsLignes(lignes);
-		JScrollPane sp = new JScrollPane(vueTab);
-		affich.add(sp);
 	}
 
 	private void quitActionPerformed(ActionEvent evt) {
