@@ -10,11 +10,9 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.Observable;
@@ -36,13 +34,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import controlleur.SerieControleur;
+import java.awt.CardLayout;
 import model.Ligne;
 import model.SerieToUse;
 
 public class Fenetre extends JFrame implements Observer {
 
 	private SerieControleur controleur;
-	private JPanel affich;
+	private JPanel affich, cardAffichCourbe, cardAffichTab;
 	private SerieToUse serie;
 	private JTable vueTab;
 	private JButton donnees, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver;
@@ -71,7 +70,9 @@ public class Fenetre extends JFrame implements Observer {
 	}
 
 	private void initialiser() {
-		affich = new JPanel();
+		affich = new JPanel(new CardLayout());
+                cardAffichTab = new JPanel();
+                cardAffichCourbe = new JPanel();
 		donnees = new JButton("Charger données");
 		plugins = new JButton("Charger plugin");
 		undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
@@ -165,7 +166,9 @@ public class Fenetre extends JFrame implements Observer {
 		affich.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
                 JScrollPane sp = new JScrollPane(vueTab);
-                affich.add(sp);
+                cardAffichTab.add(sp);
+                affich.add(cardAffichTab, "Tableau");
+                affich.add(cardAffichCourbe, "Courbe");
 
 		// panneau du bas
 		JPanel bas = new JPanel();
@@ -256,7 +259,7 @@ public class Fenetre extends JFrame implements Observer {
                 choixAffichCourbe.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
-				// a faire
+                            choixAffichCourbeActionPerformed(evt);
 			}
 		});
 
@@ -277,16 +280,14 @@ public class Fenetre extends JFrame implements Observer {
 	}
         
         private void choixAffichTabActionPerformed(ActionEvent e){
-            ArrayList<Ligne> lignes = new ArrayList<>();
-                Ligne lig1 = new Ligne("janv", 0.2569);
-		Ligne lig2 = new Ligne("fev", 1.1458);
-		Ligne lig3 = new Ligne("mar", 2.369);
-
-		lignes.add(lig1);
-		lignes.add(lig2);
-		lignes.add(lig3);
-            serie.setEnsLignes(lignes);
-            serie.fireTableStructureChanged();
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Tableau");
+                
+        }
+        
+        private void choixAffichCourbeActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Courbe");
                 
         }
 
