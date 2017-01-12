@@ -1,3 +1,5 @@
+// ---------------------------------------------------------------------------------------------------
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -44,7 +46,7 @@ public class Fenetre extends JFrame implements Observer {
 	private JPanel affich, cardAffichCourbe, cardAffichTab;
 	private SerieToUse serie;
 	private JTable vueTab;
-	private JButton donnees, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver,
+	private JButton donneesCSV, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver,
 			selectUrl;
 	private JTextField param;
 	private JTextField urlRessource;
@@ -75,14 +77,14 @@ public class Fenetre extends JFrame implements Observer {
 
 	private void initialiser() {
 		affich = new JPanel(new CardLayout());
-		cardAffichTab = new JPanel();
-		cardAffichCourbe = new JPanel();
-		donnees = new JButton("Charger données");
+                cardAffichTab = new JPanel();
+                cardAffichCourbe = new JPanel();
+		donneesCSV = new JButton("Charger données depuis un fichier CSV");
 		plugins = new JButton("Charger plugin");
 		undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
 		redo = new JButton(new ImageIcon(getClass().getResource("/images/redo.png")));
 		envoiParam = new JButton("Ok");
-		selectUrl = new JButton("Import data");
+		selectUrl = new JButton("Ok");
 		choixAffichTab = new JButton("Tableau");
 		choixAffichCourbe = new JButton("Courbe");
 		quit = new JButton("quitter");
@@ -116,15 +118,25 @@ public class Fenetre extends JFrame implements Observer {
 		gauche.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 
-		// boutons charger donnees et plugins
+		// boutons charger donnees depuis CSV, charger donnees depuis URL et plugins
 		JPanel hautGauche = new JPanel();
 		hautGauche.setLayout(new BoxLayout(hautGauche, BoxLayout.PAGE_AXIS));
 		hautGauche.setPreferredSize(eachPanDim);
-		donnees.setAlignmentX(Component.LEFT_ALIGNMENT);
+		donneesCSV.setAlignmentX(Component.LEFT_ALIGNMENT);
 		plugins.setAlignmentX(Component.LEFT_ALIGNMENT);
-		hautGauche.add(donnees);
-		hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
 		hautGauche.add(plugins);
+		hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
+		hautGauche.add(donneesCSV);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
+                hautGauche.add(indicUrl);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 10)));
+                JPanel hautGaucheUrl= new JPanel(); 
+		hautGaucheUrl.setLayout(new BoxLayout(hautGaucheUrl, BoxLayout.LINE_AXIS));
+		hautGaucheUrl.setAlignmentX(Component.LEFT_ALIGNMENT);
+		hautGaucheUrl.add(urlRessource);
+		hautGaucheUrl.add(this.selectUrl);
+                hautGauche.add(hautGaucheUrl);
+                hautGauche.add(Box.createRigidArea(new Dimension(0, 30)));
 
 		// boutons undo redo
 		JPanel milieuGauche = new JPanel();
@@ -145,15 +157,13 @@ public class Fenetre extends JFrame implements Observer {
 		basGauche.add(Box.createRigidArea(new Dimension(0, 20)));
 		indicParam.setAlignmentX(Component.LEFT_ALIGNMENT);
 		basGauche.add(indicParam);
-		basGauche.add(indicUrl);
+		
 		// saisie parametre
 		JPanel basGaucheParam = new JPanel();
 		basGaucheParam.setLayout(new BoxLayout(basGaucheParam, BoxLayout.LINE_AXIS));
 		basGaucheParam.setAlignmentX(Component.LEFT_ALIGNMENT);
 		basGaucheParam.add(param);
-		basGaucheParam.add(urlRessource);
 		basGaucheParam.add(envoiParam);
-		basGaucheParam.add(selectUrl);
 		basGaucheParam.add(Box.createRigidArea(new Dimension(150, 0)));
 		basGauche.add(Box.createRigidArea(new Dimension(0, 20)));
 		basGauche.add(basGaucheParam);
@@ -176,6 +186,7 @@ public class Fenetre extends JFrame implements Observer {
 		affich.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
 				BorderFactory.createEmptyBorder(10, 10, 10, 10)));
 		JScrollPane sp = new JScrollPane(vueTab);
+		sp.setPreferredSize(new Dimension(1000, 500));
 		cardAffichTab.add(sp);
 		affich.add(cardAffichTab, "Tableau");
 		
@@ -221,7 +232,7 @@ public class Fenetre extends JFrame implements Observer {
 
 	// ajout des listeners
 	private void ajouterListeners() {
-		donnees.addActionListener(new ActionListener() {
+		donneesCSV.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent evt) {
 				chargerDonneesActionPerformed(evt);
@@ -299,18 +310,18 @@ public class Fenetre extends JFrame implements Observer {
 		});
 
 	}
-
-	private void choixAffichTabActionPerformed(ActionEvent e) {
-		CardLayout cl = (CardLayout) (affich.getLayout());
-		cl.show(affich, "Tableau");
-
-	}
-
-	private void choixAffichCourbeActionPerformed(ActionEvent e) {
-		CardLayout cl = (CardLayout) (affich.getLayout());
-		cl.show(affich, "Courbe");
-
-	}
+        
+        private void choixAffichTabActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Tableau");
+                
+        }
+        
+        private void choixAffichCourbeActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Courbe");
+                
+        }
 
 	private void chargerDonneesActionPerformed(ActionEvent e) {
 		int retourneVal = fc.showOpenDialog(this);

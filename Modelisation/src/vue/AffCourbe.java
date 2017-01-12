@@ -1,5 +1,7 @@
 package vue;
 
+import java.awt.Dimension;
+
 import javax.swing.JPanel;
 
 import model.Ligne;
@@ -22,7 +24,7 @@ public class AffCourbe extends JPanel {
 		lineChart = ChartFactory.createLineChart("Yo", "Date", "Données", data,
 				PlotOrientation.VERTICAL, true, true, false);
 		ChartPanel chartPanel = new ChartPanel(lineChart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(1000, 500));
+		chartPanel.setPreferredSize(new Dimension(1000, 500));
 		lineChart.setTitle("Serie Chronologique");
 		this.add(chartPanel);
 	}
