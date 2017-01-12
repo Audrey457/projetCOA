@@ -24,7 +24,7 @@ public class PluginsLoader {
     private final String ITRAITEMENT = "controlleur.plugins.PluginTraitement";
     private final String ITRANSFORMATION = "controlleur.plugins.PluginTransformation";
 
-    private ArrayList<String> files;
+    private String file;
 
     private ArrayList classPluginsTraitement;
     private ArrayList classPluginsTransformation;
@@ -41,11 +41,11 @@ public class PluginsLoader {
     /**
      * Constucteur initialisant le tableau de fichier à charger.
      *
-     * @param files Liste de String contenant la liste des fichiers à charger.
+     * @param pathFile String du jarà charger.
      */
-    public PluginsLoader(ArrayList<String> files) {
+    public PluginsLoader(String jarFile) {
         this();
-        this.files = files;
+        this.file = jarFile;
     }
 
     /**
@@ -53,8 +53,8 @@ public class PluginsLoader {
      *
      * @param files
      */
-    public void setFiles(ArrayList<String> files) {
-        this.files = files;
+    public void setFiles(String jarFile) {
+        this.file = jarFile;
     }
 
     /**
@@ -102,7 +102,7 @@ public class PluginsLoader {
 
     private void initializeLoader() throws Exception {
         // On vérifie que la liste des plugins à charger a été initialisée
-        if (this.files == null || this.files.size() == 0) {
+        if (this.file == null) {
             throw new Exception("Pas de fichier spécifié");
         }
 
@@ -112,7 +112,7 @@ public class PluginsLoader {
             return;
         }
 
-        File[] f = new File[this.files.size()];
+        File f = new File(this.file);
         // Pour charger le .jar en memoire
         URLClassLoader loader;
         // Pour la comparaison de chaines
@@ -122,55 +122,48 @@ public class PluginsLoader {
         // Pour déterminer quels sont les interfaces implémentées
         Class tmpClass = null;
 
-        for (int index = 0; index < f.length; index++) {
+        if (!f.exists()) {
 
-            f[index] = new File(this.files.get(index));
+            System.out.println(f.getAbsolutePath() + " n'existe pas");
+            return;
+        }
 
-            if (!f[index].exists()) {
+        URL u = f.toURI().toURL();
+        // On crée un nouveau URLClassLoader pour charger le jar qui se
+        // trouve en dehors du CLASSPATH
+        loader = new URLClassLoader(new URL[]{u});
 
-                System.out.println(f[index].getAbsolutePath()+ " n'existe pas");
-                break;
-            }
+        // On charge le jar en mémoire
+        JarFile jar = new JarFile(f.getAbsolutePath());
 
-            URL u = f[index].toURI().toURL();
-            // On crée un nouveau URLClassLoader pour charger le jar qui se
-            // trouve en dehors du CLASSPATH
-            loader = new URLClassLoader(new URL[]{u});
+        // On récupère le contenu du jar
+        enumeration = jar.entries();
 
-            // On charge le jar en mémoire
-            JarFile jar = new JarFile(f[index].getAbsolutePath());
+        while (enumeration.hasMoreElements()) {
 
-            // On récupère le contenu du jar
-            enumeration = jar.entries();
+            JarEntry je = enumeration.nextElement();
 
-            while (enumeration.hasMoreElements()) {
+            if (!je.isDirectory() && je.getName().endsWith(".class")) {
 
-                JarEntry je = enumeration.nextElement();
+                tmp = je.getName();
+                tmp = tmp.substring(0, tmp.length() - 6);
+                tmp = tmp.replaceAll("/", ".");
 
-                if (!je.isDirectory() && je.getName().endsWith(".class")) {
+                tmpClass = Class.forName(tmp, true, loader);
 
-                    tmp = je.getName();
-                    tmp = tmp.substring(0, tmp.length() - 6);
-                    tmp = tmp.replaceAll("/", ".");
+                for (int i = 0; i < tmpClass.getInterfaces().length; i++) {
 
-                    tmpClass = Class.forName(tmp, true, loader);
-
-                    for (int i = 0; i < tmpClass.getInterfaces().length; i++) {
-
-                        if (tmpClass.getInterfaces()[i].getName().toString()
-                                .equals(this.ITRAITEMENT)) {
-                            this.classPluginsTraitement.add(tmpClass);
-                        } else if (tmpClass.getInterfaces()[i].getName().toString()
-                                .equals(this.ITRANSFORMATION)) {
-                            this.classPluginsTransformation.add(tmpClass);
-                        }
+                    if (tmpClass.getInterfaces()[i].getName().toString()
+                            .equals(this.ITRAITEMENT)) {
+                        this.classPluginsTraitement.add(tmpClass);
+                    } else if (tmpClass.getInterfaces()[i].getName().toString()
+                            .equals(this.ITRANSFORMATION)) {
+                        this.classPluginsTransformation.add(tmpClass);
                     }
-
                 }
-            }
 
+            }
         }
 
     }
-
 }
