@@ -1,35 +1,37 @@
 package vue;
 
-//import model.Tableau;
+import javax.swing.JPanel;
 
-import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
 import model.Ligne;
 import model.SerieToUse;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
 
+public class AffCourbe extends JPanel {
 
-public class AffCourbe extends AbstractAction{
-    
-    private SerieToUse serie;
-    
-    public AffCourbe(){
-        super("Affichage de la courbe");
-    }
+	private SerieToUse serie;
+	private DefaultCategoryDataset data;
+	private JFreeChart lineChart;
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        int i = 0;
-        final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-        for(Ligne l: serie.getEnsLignes()){
-            dataset.addValue((Number)serie.getValueAt(i, 1), (String)serie.getValueAt(i, 0), enabled);
-            i++;
-        }
-        final JFreeChart curve = ChartFactory.createLineChart("Courbe", "babi", "boubou", dataset, PlotOrientation.HORIZONTAL, enabled, enabled, enabled);
-        
-    }
-    
+	public AffCourbe(SerieToUse serie) {
+		data = new DefaultCategoryDataset();
+		this.serie = serie;
+		lineChart = ChartFactory.createLineChart("Yo", "Date", "Données", data,
+				PlotOrientation.VERTICAL, true, true, false);
+		ChartPanel chartPanel = new ChartPanel(lineChart);
+		chartPanel.setPreferredSize(new java.awt.Dimension(1000, 500));
+		lineChart.setTitle("Serie Chronologique");
+		this.add(chartPanel);
+	}
+
+	public void majCourbe() {
+		data.clear();
+		for (Ligne l : serie.getEnsLignes()) {
+			data.addValue(l.getValeur(), "azerty", l.getValDate());
+		}
+	}
+
 }

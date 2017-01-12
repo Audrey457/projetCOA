@@ -52,6 +52,7 @@ public class Fenetre extends JFrame implements Observer {
 	private JLabel indicParam;
 	private JLabel indicUrl;
 	private JFileChooser fc;
+	private AffCourbe courbe;
 
 	public Fenetre(SerieToUse serie, SerieControleur controleur) {
 		super();
@@ -177,6 +178,10 @@ public class Fenetre extends JFrame implements Observer {
 		JScrollPane sp = new JScrollPane(vueTab);
 		cardAffichTab.add(sp);
 		affich.add(cardAffichTab, "Tableau");
+		
+		courbe = new AffCourbe(serie);
+		controleur.addCourbe(courbe);
+		cardAffichCourbe.add(courbe);
 		affich.add(cardAffichCourbe, "Courbe");
 
 		// panneau du bas
@@ -351,6 +356,7 @@ public class Fenetre extends JFrame implements Observer {
 	public void update(Observable arg0, Object arg1) {
 		if (arg1.equals("serieChange")) {
 			serie.fireTableStructureChanged();
+			courbe.majCourbe();
 		}
 
 	}
