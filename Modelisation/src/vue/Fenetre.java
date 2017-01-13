@@ -1,3 +1,5 @@
+// ---------------------------------------------------------------------------------------------------
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -60,6 +62,9 @@ public class Fenetre extends JFrame implements Observer {
     private ArrayList<PluginTransformation> plugsTransfo;
     private ArrayList<PluginTraitement> plugsTrait;
     private String textCombo[] = {"Aucun plugin", ""};
+    private AffCourbe courbe;
+
+
 
     public Fenetre(SerieToUse serie, SerieControleur controleur) {
         super();
@@ -127,7 +132,6 @@ public class Fenetre extends JFrame implements Observer {
             }
             choixOpe = new JComboBox(textCombo);
         }
-
     }
 
     // positionnement de tous les elements dans la fenetre principale
@@ -143,6 +147,7 @@ public class Fenetre extends JFrame implements Observer {
         gauche.setMaximumSize(new Dimension(400, 800));
         gauche.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+
 
         // boutons charger donnees depuis CSV, charger donnees depuis URL et plugins
         JPanel hautGauche = new JPanel();
@@ -176,6 +181,7 @@ public class Fenetre extends JFrame implements Observer {
         basGauche.setLayout(new BoxLayout(basGauche, BoxLayout.Y_AXIS));
         basGauche.setPreferredSize(new Dimension(400, 400));
 
+
         // comboBox choix opération
         choixOpe.setAlignmentX(Component.LEFT_ALIGNMENT);
         basGauche.add(Box.createRigidArea(new Dimension(0, 100)));
@@ -183,6 +189,7 @@ public class Fenetre extends JFrame implements Observer {
         basGauche.add(Box.createRigidArea(new Dimension(0, 20)));
         indicParam.setAlignmentX(Component.LEFT_ALIGNMENT);
         basGauche.add(indicParam);
+		
 
         // saisie parametre
         JPanel basGaucheParam = new JPanel();
@@ -212,10 +219,14 @@ public class Fenetre extends JFrame implements Observer {
         affich.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
         JScrollPane sp = new JScrollPane(vueTab);
+        sp.setPreferredSize(new Dimension(1000, 500));
         cardAffichTab.add(sp);
         affich.add(cardAffichTab, "Tableau");
-        affich.add(cardAffichCourbe, "Courbe");
 
+        courbe = new AffCourbe(serie);
+        controleur.addCourbe(courbe);
+        cardAffichCourbe.add(courbe);
+        affich.add(cardAffichCourbe, "Courbe");
         // panneau du bas
         JPanel bas = new JPanel();
         bas.setLayout(new BoxLayout(bas, BoxLayout.PAGE_AXIS));
@@ -249,11 +260,6 @@ public class Fenetre extends JFrame implements Observer {
         // ajout de tous les panneaux dans la fenetre
         this.add(gauche);
         this.add(droit);
-    }
-
-    //permet d'ajouter toutes les operations qui sont de base dans l'application
-    private void ajouterPluginsDeBase() {
-        //A faire
     }
 
     // ajout des listeners
@@ -304,6 +310,7 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
+
         selectUrl.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -339,7 +346,21 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
-    }
+	}
+        
+        private void choixAffichTabActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Tableau");
+                
+        }
+        
+        private void choixAffichCourbeActionPerformed(ActionEvent e){
+            CardLayout cl = (CardLayout)(affich.getLayout());
+            cl.show(affich, "Courbe");
+                
+        }
+
+
 
     private void chargerPluginActionPerformed(ActionEvent e) throws Exception {
         int retourneVal = fc.showOpenDialog(this);
@@ -370,17 +391,14 @@ public class Fenetre extends JFrame implements Observer {
         choixOpe = new JComboBox(textCombo);
     }
 
-    private void choixAffichTabActionPerformed(ActionEvent e) {
-        CardLayout cl = (CardLayout) (affich.getLayout());
-        cl.show(affich, "Tableau");
 
-    }
-
-    private void choixAffichCourbeActionPerformed(ActionEvent e) {
-        CardLayout cl = (CardLayout) (affich.getLayout());
-        cl.show(affich, "Courbe");
-
-    }
+	@Override
+	public void update(Observable arg0, Object arg1) {
+		if (arg1.equals("serieChange")) {
+			serie.fireTableStructureChanged();
+			courbe.majCourbe();
+		}
+        }
 
     private void chargerDonneesActionPerformed(ActionEvent e) {
         int retourneVal = fc.showOpenDialog(this);
@@ -420,13 +438,5 @@ public class Fenetre extends JFrame implements Observer {
 
     private void quitActionPerformed(ActionEvent evt) {
         this.dispose();
-    }
-
-    @Override
-    public void update(Observable arg0, Object arg1) {
-        if (arg1.equals("serieChange")) {
-            serie.fireTableStructureChanged();
-        }
-
     }
 }

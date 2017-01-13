@@ -7,11 +7,13 @@ import javax.swing.JOptionPane;
 
 import model.Ligne;
 import model.SerieToUse;
+import vue.AffCourbe;
 import vue.Fenetre;
 
 public class SerieControleur {
 	private SerieToUse serie;
 	private Fenetre vue;
+	private AffCourbe courbe;
 	private ImportSerie importserie;
 
 	public SerieControleur(SerieToUse model) {
@@ -38,5 +40,9 @@ public class SerieControleur {
 	// sur la vue
 	public void addView(Fenetre vue) {
 		this.vue = vue;
+	}
+
+	public void addCourbe(AffCourbe courbe) {
+		this.courbe = courbe;
 	}
 }
