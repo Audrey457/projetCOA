@@ -10,10 +10,12 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 
 import model.Ligne;
+import model.SerieToUse;
 import vue.Fenetre;
 
 public class ImportSerieURL implements ImportSerie {
 	private ArrayList<Ligne> ensLignes = new ArrayList<>();
+	private SerieToUse serie;
 	String[] ligne;
 	Fenetre vue;
 
@@ -21,7 +23,8 @@ public class ImportSerieURL implements ImportSerie {
 		this.vue = vue;
 	}
 
-	public ArrayList<Ligne> importerSerie(String adresse) {
+	public SerieToUse importerSerie(String adresse) {
+		serie = new SerieToUse();
 		BufferedReader reader = null;
 		String chaine = "";
 
@@ -47,12 +50,14 @@ public class ImportSerieURL implements ImportSerie {
 		String[] entetes = chaine.split(",");
 		// utile pour récupérer l'indice
 		ArrayList<String> listEntetes = new ArrayList<>();
+
 		for (int i = 1; i < entetes.length; i++)
 			listEntetes.add(entetes[i]);
 
 		String s = (String) JOptionPane.showInputDialog(vue, "Quelle colonne voulez vous sélectionner?",
 				"Selection colonne", JOptionPane.QUESTION_MESSAGE, null, listEntetes.toArray(),
 				listEntetes.toArray()[0]);
+		serie.setColumnName(1, s);
 
 		// lecture de la colonne selectionnée
 		try {
@@ -73,7 +78,8 @@ public class ImportSerieURL implements ImportSerie {
 			return null;
 		}
 
-		return ensLignes;
+		serie.setEnsLignes(ensLignes);
+		return serie;
 	}
 
 }

@@ -25,14 +25,14 @@ public class SerieControleur {
 			JOptionPane.showMessageDialog(vue, "Fichier incorrect.", "Erreur format", JOptionPane.ERROR_MESSAGE);
 		} else if (chemin.substring(0, 4).equals("http")) {
 			importserie = new ImportSerieURL(vue);
-			ArrayList<Ligne> lignes = importserie.importerSerie(chemin);
-			if (lignes != null)
-				serie.setEnsLignes(lignes);
+			SerieToUse importSerie = importserie.importerSerie(chemin);
+			if (importSerie != null)
+				serie.setSerieToUse(importSerie);
 		} else {
 			importserie = new ImportSerieCSV(vue);
-			ArrayList<Ligne> lignes = importserie.importerSerie(chemin);
-			if (lignes != null)
-				serie.setEnsLignes(lignes);
+			SerieToUse importSerie = importserie.importerSerie(chemin);
+			if (importSerie != null)
+				serie.setSerieToUse(importSerie);
 		}
 	}
 

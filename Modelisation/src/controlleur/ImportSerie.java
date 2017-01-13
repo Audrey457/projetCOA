@@ -1,10 +1,8 @@
 package controlleur;
 
-import java.util.ArrayList;
-
-import model.Ligne;
+import model.SerieToUse;
 
 public interface ImportSerie {
 	// différentes méthodes d'import pourront implémenter cette méthode
-	public ArrayList<Ligne> importerSerie(String chemin);
+	public SerieToUse importerSerie(String chemin);
 }

@@ -6,19 +6,22 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import model.Ligne;
+import model.SerieToUse;
 import vue.Fenetre;
 
 public class ImportSerieCSV implements ImportSerie {
 	private ArrayList<Ligne> ensLignes = new ArrayList<>();
+	private SerieToUse serie;
 	String[] ligne;
 	Fenetre vue;
 
-	public ImportSerieCSV(Fenetre vue){
+	public ImportSerieCSV(Fenetre vue) {
 		this.vue = vue;
 	}
-	
-	public ArrayList<Ligne> importerSerie(String chemin) {
+
+	public SerieToUse importerSerie(String chemin) {
 		try {
+			serie = new SerieToUse();
 			BufferedReader fichier = new BufferedReader(new FileReader(chemin));
 			String chaine;
 			fichier.readLine();
@@ -31,7 +34,8 @@ public class ImportSerieCSV implements ImportSerie {
 		} catch (IOException e) {
 			System.out.println("Le fichier est introuvable !");
 		}
-		return ensLignes;
+		serie.setEnsLignes(ensLignes);
+		return serie;
 	}
 
 }

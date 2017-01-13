@@ -21,9 +21,10 @@ public class AffCourbe extends JPanel {
 	public AffCourbe(SerieToUse serie) {
 		data = new DefaultCategoryDataset();
 		this.serie = serie;
-		lineChart = ChartFactory.createLineChart("Yo", "Date", "Données", data,
+		lineChart = ChartFactory.createLineChart("Graphique", "Date", "Données", data,
 				PlotOrientation.VERTICAL, true, true, false);
 		ChartPanel chartPanel = new ChartPanel(lineChart);
+		chartPanel.setMouseZoomable(false);
 		chartPanel.setPreferredSize(new Dimension(1000, 500));
 		lineChart.setTitle("Serie Chronologique");
 		this.add(chartPanel);
@@ -32,8 +33,9 @@ public class AffCourbe extends JPanel {
 	public void majCourbe() {
 		data.clear();
 		for (Ligne l : serie.getEnsLignes()) {
-			data.addValue(l.getValeur(), "azerty", l.getValDate());
+			data.addValue(l.getValeur(), serie.getColumnName(1), l.getValDate());
 		}
+		
 	}
 
 }

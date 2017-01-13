@@ -14,7 +14,7 @@ import javax.swing.event.TableModelListener;
 
 public class SerieToUse extends Observable implements ISerie {
 
-	private final String[] entetes = { "Date", "Valeur" };
+	private String[] entetes = { "Date", "Valeur" };
 	private ArrayList<Ligne> ensLignes;
 	protected EventListenerList listenerList = new EventListenerList();
 
@@ -24,6 +24,13 @@ public class SerieToUse extends Observable implements ISerie {
 
 	public SerieToUse(ArrayList<Ligne> ensLignes) {
 		this.ensLignes = ensLignes;
+	}
+
+	public void setSerieToUse(SerieToUse importSerie) {
+		this.ensLignes = importSerie.ensLignes;
+		this.entetes = importSerie.entetes;
+		this.setChanged();
+		this.notifyObservers("serieChange");
 	}
 
 	public ArrayList<Ligne> getEnsLignes() {
@@ -60,6 +67,10 @@ public class SerieToUse extends Observable implements ISerie {
 	@Override
 	public String getColumnName(int columnIndex) {
 		return entetes[columnIndex];
+	}
+
+	public void setColumnName(int columnIndex, String columnName) {
+		entetes[columnIndex] = columnName;
 	}
 
 	@Override
