@@ -28,6 +28,7 @@ public class ImportSerieURL implements ImportSerie {
 		BufferedReader reader = null;
 		String chaine = "";
 
+		// ouverture de la ressource
 		try {
 			System.setProperty("http.proxyHost", "cache.univ-lille1.fr");
 			System.setProperty("http.proxyPort", "3128");
@@ -36,9 +37,11 @@ public class ImportSerieURL implements ImportSerie {
 			reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
 		} catch (IOException e) {
 			System.out.println("URL incorrecte");
+			JOptionPane.showMessageDialog(vue, "URL incorrecte", "Erreur", JOptionPane.ERROR_MESSAGE);
 			return null;
 		}
 
+		// recuperation des noms des colonnes
 		try {
 			chaine = reader.readLine();
 		} catch (IOException e1) {
@@ -53,13 +56,14 @@ public class ImportSerieURL implements ImportSerie {
 
 		for (int i = 1; i < entetes.length; i++)
 			listEntetes.add(entetes[i]);
-
+		
+		// nom de la colonne voulu
 		String s = (String) JOptionPane.showInputDialog(vue, "Quelle colonne voulez vous sélectionner?",
 				"Selection colonne", JOptionPane.QUESTION_MESSAGE, null, listEntetes.toArray(),
 				listEntetes.toArray()[0]);
 		serie.setColumnName(1, s);
 
-		// lecture de la colonne selectionnée
+		// lecture de la colonne voulu
 		try {
 			while ((chaine = reader.readLine()) != null) {
 				ligne = chaine.split(",");

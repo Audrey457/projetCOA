@@ -1,11 +1,8 @@
 
 package controlleur;
 
-import java.util.ArrayList;
-
 import javax.swing.JOptionPane;
 
-import model.Ligne;
 import model.SerieToUse;
 import vue.AffCourbe;
 import vue.Fenetre;

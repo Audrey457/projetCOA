@@ -5,6 +5,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import model.Ligne;
 import model.SerieToUse;
 import vue.Fenetre;
@@ -32,7 +34,8 @@ public class ImportSerieCSV implements ImportSerie {
 			fichier.close();
 
 		} catch (IOException e) {
-			System.out.println("Le fichier est introuvable !");
+			JOptionPane.showMessageDialog(vue, "Le fichier est introuvable", "Erreur", JOptionPane.ERROR_MESSAGE);
+			return null;
 		}
 		serie.setEnsLignes(ensLignes);
 		return serie;
