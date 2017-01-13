@@ -12,7 +12,7 @@ import java.util.logging.Logger;
  */
 public class TestLoader {
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         PluginsLoader pl = new PluginsLoader();
 
@@ -29,5 +29,5 @@ public class TestLoader {
             Logger.getLogger(TestLoader.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
+    }*/
 }

@@ -36,11 +36,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 
 import controlleur.SerieControleur;
-import controlleur.plugins.PluginBase;
 import controlleur.plugins.PluginTraitement;
 import controlleur.plugins.PluginTransformation;
 import java.awt.CardLayout;
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.SerieToUse;
@@ -50,8 +50,10 @@ public class Fenetre extends JFrame implements Observer {
     private SerieControleur controleur;
     private JPanel affich, cardAffichCourbe, cardAffichTab;
     private SerieToUse serie;
+    private Stack<SerieToUse> pileTransfo;
+    private Stack<SerieToUse> pileUndo;
     private JTable vueTab;
-    private JButton donneesCSV, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, sauver,
+    private JButton donneesCSV, plugins, undo, redo, envoiParam, choixAffichTab, choixAffichCourbe, quit, choixNbCourbe,
             selectUrl;
     private JTextField param;
     private JTextField urlRessource;
@@ -63,6 +65,7 @@ public class Fenetre extends JFrame implements Observer {
     private ArrayList<PluginTraitement> plugsTrait;
     private String textCombo[] = {"Aucun plugin", ""};
     private AffCourbe courbe;
+    private boolean doubleAffich;
 
 
 
@@ -87,18 +90,23 @@ public class Fenetre extends JFrame implements Observer {
 
     private void initialiser() {
         affich = new JPanel(new CardLayout());
+        pileTransfo = new Stack<>();
+        pileUndo = new Stack<>();
         cardAffichTab = new JPanel();
         cardAffichCourbe = new JPanel();
         donneesCSV = new JButton("Charger données depuis un fichier CSV");
         plugins = new JButton("Charger plugin");
         undo = new JButton(new ImageIcon(getClass().getResource("/images/undo.jpg")));
+        undo.setEnabled(false);
         redo = new JButton(new ImageIcon(getClass().getResource("/images/redo.png")));
+        redo.setEnabled(false);
         envoiParam = new JButton("Ok");
         selectUrl = new JButton("Ok");
         choixAffichTab = new JButton("Tableau");
         choixAffichCourbe = new JButton("Courbe");
         quit = new JButton("quitter");
-        sauver = new JButton("Sauvegarder état actuel");
+        choixNbCourbe = new JButton("Afficher uniquement la serie transformée");
+        choixNbCourbe.setEnabled(false);
         param = new JTextField("Saisie paramètre");
         urlRessource = new JTextField("ex : http://google.fr/fichier.csv");
         indicParam = new JLabel("Indiquez paramètre numérique :");
@@ -107,6 +115,7 @@ public class Fenetre extends JFrame implements Observer {
         fc = new JFileChooser();
         plugsTransfo = new ArrayList<>();
         plugsTrait = new ArrayList<>();
+        doubleAffich = false;
 
         boolean tranfoEmpty, traitEmpty;
         tranfoEmpty = plugsTransfo.isEmpty();
@@ -132,6 +141,7 @@ public class Fenetre extends JFrame implements Observer {
             }
             choixOpe = new JComboBox(textCombo);
         }
+        choixOpe.setEnabled(false);
     }
 
     // positionnement de tous les elements dans la fenetre principale
@@ -239,7 +249,7 @@ public class Fenetre extends JFrame implements Observer {
         JPanel ctnChoix = new JPanel();
         ctnSaveQuit.setLayout(new BoxLayout(ctnSaveQuit, BoxLayout.LINE_AXIS));
         ctnSaveQuit.add(Box.createRigidArea(new Dimension(400, 0)));
-        ctnSaveQuit.add(sauver);
+        ctnSaveQuit.add(choixNbCourbe);
         ctnSaveQuit.add(Box.createRigidArea(new Dimension(300, 0)));
         ctnChoix.setLayout(new BoxLayout(ctnChoix, BoxLayout.LINE_AXIS));
         quit.setAlignmentX(Component.RIGHT_ALIGNMENT);
@@ -299,7 +309,11 @@ public class Fenetre extends JFrame implements Observer {
         choixOpe.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                // a faire
+                try {
+                    choixOpeActionPerformed(evt);
+                } catch (Exception ex) {
+                    Logger.getLogger(Fenetre.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -314,7 +328,7 @@ public class Fenetre extends JFrame implements Observer {
         selectUrl.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                controleur.fixeSerie(urlRessource.getText());
+                selectUrlActionPerformed(evt);
             }
         });
 
@@ -339,26 +353,59 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
-        sauver.addActionListener(new ActionListener() {
+        choixNbCourbe.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                sauverActionPerformed(evt);
+                choixNbCourbeActionPerformed(evt);
             }
         });
 
 	}
+    
+    private void selectUrlActionPerformed(ActionEvent e){
+        controleur.fixeSerie(urlRessource.getText());
+        pileTransfo.clear();
+        pileUndo.clear();
+        choixOpe.setEnabled(true);
+        pileTransfo.add(serie);
+    }
         
         private void choixAffichTabActionPerformed(ActionEvent e){
             CardLayout cl = (CardLayout)(affich.getLayout());
             cl.show(affich, "Tableau");
+            choixNbCourbe.setEnabled(false);
                 
         }
         
         private void choixAffichCourbeActionPerformed(ActionEvent e){
             CardLayout cl = (CardLayout)(affich.getLayout());
             cl.show(affich, "Courbe");
+            if(!plugsTransfo.isEmpty() || !plugsTrait.isEmpty()){
+                choixNbCourbe.setEnabled(true);
+            }
                 
         }
+        
+    private void choixOpeActionPerformed(ActionEvent e) throws Exception{
+        JComboBox cb = (JComboBox)e.getSource();
+        int clicIndex = cb.getSelectedIndex();
+        int taillePlugsTransfo = plugsTransfo.size();
+        if(!this.plugsTrait.isEmpty() || !this.plugsTransfo.isEmpty()){
+            //on applique une operation qui genere une nouvelle serie
+            if(clicIndex < taillePlugsTransfo){
+                SerieToUse serieTransfo = (SerieToUse)plugsTransfo.get(clicIndex).transform(serie);
+                pileTransfo.add(serieTransfo);
+                //serie.setSerieTransfo(serieTransfo);
+                undo.setEnabled(true); 
+            }
+            //on applique une operation qui genere un seul chiffre et on affiche le resultat dans un pop up
+            else{
+                double resultat = plugsTrait.get(clicIndex - taillePlugsTransfo - 1).getValue(serie);
+                String message = "Résultat : " + resultat;
+                JOptionPane.showMessageDialog(this, resultat);
+            }
+        }
+    }
 
 
 
@@ -404,32 +451,23 @@ public class Fenetre extends JFrame implements Observer {
         int retourneVal = fc.showOpenDialog(this);
         if (retourneVal == JFileChooser.APPROVE_OPTION) {
             controleur.fixeSerie(fc.getSelectedFile().getPath());
-        }
+            pileTransfo.clear();
+            pileUndo.clear();
+            choixOpe.setEnabled(true);
+            pileTransfo.add(serie);
+        } 
     }
 
-    private void sauverActionPerformed(ActionEvent e) {
-        int userSelection = fc.showSaveDialog(this);
-
-        if (userSelection == JFileChooser.APPROVE_OPTION) {
-            FileOutputStream fich;
-            ObjectOutputStream oos;
-            String nomFich;
-            nomFich = fc.getSelectedFile().toString().replace(".sc", "");
-            nomFich += ".sc";
-            try {
-                fich = new FileOutputStream(nomFich);
-                oos = new ObjectOutputStream(fich);
-                oos.writeObject(this.serie);
-                fich.close();
-                oos.close();
-            } catch (FileNotFoundException fnfe) {
-                System.out.println(fnfe.getMessage());
-            } catch (IOException ioe) {
-                System.out.println(ioe.getMessage());
-            }
-        } else {
-            JOptionPane.showMessageDialog(this, "Vous n'avez pas sauvegardé.");
+    private void choixNbCourbeActionPerformed(ActionEvent e) {
+        if(doubleAffich == false){
+            choixNbCourbe.setText("Superposer les 2 courbes");
+            doubleAffich = true;
         }
+        else{
+            choixNbCourbe.setText("Afficher uniquement la serie transformée");
+            doubleAffich = false;
+        }
+        
     }
 
     private void chargerEssai() {
