@@ -21,6 +21,7 @@ import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
 
 
+
 public class AffCourbe extends JPanel {
 
 	private SerieToUse serie;

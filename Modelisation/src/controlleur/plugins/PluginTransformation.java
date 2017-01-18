@@ -20,7 +20,7 @@ public interface PluginTransformation extends PluginBase {
      * @param serie
      * @return Nouvelle serie transformée
      */
-    public ISerie transform(ISerie serie);
+    public ISerie transform();
     
     
 }

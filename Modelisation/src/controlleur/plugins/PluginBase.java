@@ -6,41 +6,31 @@
 package controlleur.plugins;
 
 import java.util.ArrayList;
-
+import model.ISerie;
 /**
  *
  * @author lalleaul
  */
 public interface PluginBase {
-
+   
     /**
      * Obtient le libellé à afficher
      *
-     * @return Le libellé sous forme de String.
+     * @return String
      */
     public String getLibelle();
 
     /**
      * Obtient la catégorie du plugin : transformation, traitement, prévision...
      *
-     * @return La catégorie du plugin
+     * @return Categorie
      */
     public Categorie getCategorie();
-
-    /**
-     * Obtient une liste des libellés des paramètres demandés
-     * 
-     * WARNING : liste static, comment faire pour le lissage par exemple?
-     * 
-     * @return Liste de string des libellés de paramètres
-     */
-    public ArrayList<String> getParam();
-
-    /**
-     * Fixe les paramètres de la transformation
-     *
-     * @param parametre
-     */
-    public void setParam(ArrayList<Double> listParam);
+    
+    public void setSerie(ISerie serie);
+    
+    public void askValues();
+    
+    public boolean isPossible();
 
 }
