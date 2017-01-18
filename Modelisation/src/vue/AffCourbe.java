@@ -4,9 +4,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
 import javax.swing.JPanel;
-
 import model.Ligne;
 import model.SerieToUse;
 import org.jfree.chart.ChartFactory;
@@ -21,6 +19,7 @@ import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
+
 
 public class AffCourbe extends JPanel {
 
