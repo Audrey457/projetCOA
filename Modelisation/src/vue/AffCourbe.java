@@ -15,18 +15,16 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.XYPlot;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.time.Day;
-import org.jfree.data.time.Month;
 import org.jfree.data.time.TimeSeries;
 import org.jfree.data.time.TimeSeriesCollection;
 import org.jfree.data.xy.XYDataset;
-
-
 
 public class AffCourbe extends JPanel {
 
 	private SerieToUse serie;
 	XYDataset dataset = new TimeSeriesCollection();
 	XYPlot plot;
+	JFreeChart chart;
 
 	public AffCourbe(SerieToUse serie) {
 		this.serie = serie;
@@ -38,11 +36,11 @@ public class AffCourbe extends JPanel {
 
 	private JFreeChart createChart(final XYDataset dataset) {
 
-		final JFreeChart chart = ChartFactory.createTimeSeriesChart("Serie Chronologique", "Date", "Y", dataset, true,
+		chart = ChartFactory.createTimeSeriesChart("Serie Chronologique", "Date", "Y", dataset, true,
 				true, false);
 
 		chart.setBackgroundPaint(Color.white);
-
+		chart.removeLegend();
 		plot = chart.getXYPlot();
 		plot.setBackgroundPaint(Color.lightGray);
 		// plot.setAxisOffset(new Spacer(Spacer.ABSOLUTE, 5.0, 5.0, 5.0, 5.0));
@@ -56,7 +54,7 @@ public class AffCourbe extends JPanel {
 
 		final NumberAxis rangeAxis = (NumberAxis) plot.getRangeAxis();
 		rangeAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-
+		
 		return chart;
 	}
 
@@ -68,10 +66,25 @@ public class AffCourbe extends JPanel {
 		setDefaultCourbe();
 	}
 
-	private void setDefaultCourbe() {
+	// Supprime toutes les courbes pour la remplacer par celle de serie
+	public void setDefaultCourbe() {
+		for (int i = 0; i < ((TimeSeriesCollection) dataset).getSeriesCount(); i++) {
+			((TimeSeriesCollection) dataset).getSeries(i).clear();
+		}
+		
+		addCourbe(this.serie);
+	}
+	
+	public void uniqueCourbe(SerieToUse serie) {
+		for (int i = 0; i < ((TimeSeriesCollection) dataset).getSeriesCount(); i++) {
+			((TimeSeriesCollection) dataset).getSeries(i).clear();
+		}
+		
+		addCourbe(serie);
+	}
 
-		TimeSeries s1 = new TimeSeries("Data");
-
+	public void addCourbe(SerieToUse serie) {
+		TimeSeries s = new TimeSeries(serie.getColumnName(1));
 		for (Ligne l : serie.getEnsLignes()) {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 			Date date = null;
@@ -81,21 +94,10 @@ public class AffCourbe extends JPanel {
 				System.err.println("Format de date invalide. Usage : yyyy-MM-dd");
 				System.err.println(e.getMessage());
 			}
-			s1.add(new Day(date), l.getValeur());
+			s.add(new Day(date), l.getValeur());
 		}
-
-		((TimeSeriesCollection) dataset).setDomainIsPointsInTime(true);
-
-		((TimeSeriesCollection) dataset).addSeries(s1);
-	}
-
-	public void addCourbe() {
-		TimeSeries s2 = new TimeSeries("Test");
-		s2.add(new Month(2, 2001), 129.6);
-		s2.add(new Month(3, 2001), 123.2);
-		s2.add(new Month(4, 2001), 117.2);
-		s2.add(new Month(5, 2001), 124.1);
-		((TimeSeriesCollection) dataset).addSeries(s2);
+		((TimeSeriesCollection) dataset).addSeries(s);
+		chart.fireChartChanged();
 	}
 
 }

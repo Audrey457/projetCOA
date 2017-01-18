@@ -369,7 +369,6 @@ public class Fenetre extends JFrame implements Observer {
         CardLayout cl = (CardLayout) (affich.getLayout());
         cl.show(affich, "Tableau");
         choixNbCourbe.setEnabled(false);
-
     }
 
     private void choixAffichCourbeActionPerformed(ActionEvent e) {
@@ -397,8 +396,9 @@ public class Fenetre extends JFrame implements Observer {
                 plugin.askValues(this);
                 SerieToUse serieTransfo = (SerieToUse) plugin.transform();
                 pileTransfo.add(serieTransfo);
-                //serie.setSerieTransfo(serieTransfo);
+                courbe.addCourbe(serieTransfo);
                 undo.setEnabled(true);
+                choixNbCourbe.setEnabled(true);
             } //on applique une operation qui genere un seul chiffre et on affiche le resultat dans un pop up
             else {
                 PluginTraitement plugin = plugsTrait.get(clicIndex - taillePlugsTransfo - 1);
@@ -471,13 +471,17 @@ public class Fenetre extends JFrame implements Observer {
 
     private void choixNbCourbeActionPerformed(ActionEvent e) {
         if (doubleAffich == false) {
+        	// affichage serie transformee
+        	courbe.uniqueCourbe(pileTransfo.lastElement());
             choixNbCourbe.setText("Superposer les 2 courbes");
             doubleAffich = true;
         } else {
+        	// affichage des deux courbes
+        	courbe.setDefaultCourbe();
+            courbe.addCourbe(pileTransfo.lastElement());
             choixNbCourbe.setText("Afficher uniquement la serie transformée");
-            doubleAffich = false;
+            doubleAffich = false;   
         }
-
     }
 
     private void chargerEssai() {
