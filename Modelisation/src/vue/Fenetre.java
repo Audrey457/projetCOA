@@ -106,7 +106,7 @@ public class Fenetre extends JFrame implements Observer {
         choixNbCourbe = new JButton("Afficher uniquement la serie transformée");
         choixNbCourbe.setEnabled(false);
         param = new JTextField("Saisie paramètre");
-        urlRessource = new JTextField("ex : http://google.fr/fichier.csv");
+        urlRessource = new JTextField("http://real-chart.finance.yahoo.com/table.csv?s=%5EFCHI&d=0&e=18&f=2017&g=d&a=2&b=1&c=1990&ignore=.csv");
         indicParam = new JLabel("Indiquez paramètre numérique :");
         indicUrl = new JLabel("Indiquez l'url de la ressource en ligne :");
         vueTab = new JTable(serie);
@@ -391,8 +391,10 @@ public class Fenetre extends JFrame implements Observer {
         if (!this.plugsTrait.isEmpty() || !this.plugsTransfo.isEmpty()) {
             //on applique une operation qui genere une nouvelle serie
             if (clicIndex < taillePlugsTransfo) {
-                PluginTransformation plugin = plugsTransfo.get(clicIndex);
+                PluginTransformation plugin = plugsTransfo.get(clicIndex-1);
+                System.out.println("opération selectionnée : " + plugin.getLibelle());
                 plugin.setSerie(serie);
+                plugin.askValues(this);
                 SerieToUse serieTransfo = (SerieToUse) plugin.transform();
                 pileTransfo.add(serieTransfo);
                 //serie.setSerieTransfo(serieTransfo);
@@ -400,7 +402,10 @@ public class Fenetre extends JFrame implements Observer {
             } //on applique une operation qui genere un seul chiffre et on affiche le resultat dans un pop up
             else {
                 PluginTraitement plugin = plugsTrait.get(clicIndex - taillePlugsTransfo - 1);
+                System.out.println("opération selectionnée : " + plugin.getLibelle());
+
                 plugin.setSerie(serie);
+                plugin.askValues(this);
                 double resultat = plugin.getValue();
                 String message = "Résultat : " + resultat;
                 JOptionPane.showMessageDialog(this, resultat);
