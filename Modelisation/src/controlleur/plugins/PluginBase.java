@@ -6,7 +6,9 @@
 package controlleur.plugins;
 
 import java.util.ArrayList;
+import javax.swing.JFrame;
 import model.ISerie;
+
 /**
  *
  * @author lalleaul
@@ -29,7 +31,7 @@ public interface PluginBase {
     
     public void setSerie(ISerie serie);
     
-    public void askValues();
+    public void askValues(JFrame frame);
     
     public boolean isPossible();
 
