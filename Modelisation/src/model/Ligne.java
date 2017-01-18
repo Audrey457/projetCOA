@@ -1,14 +1,14 @@
 package model;
 public class Ligne {
     private String valDate;
-    private double valeur;
+    private Double valeur;
     
     public Ligne(){
         valDate = "";
-        valeur = 0.0;
+        valeur = null;
     }
 
-    public Ligne(String valDate, double valeur) {
+    public Ligne(String valDate, Double valeur) {
         this.valDate = valDate;
         this.valeur = valeur;
     }

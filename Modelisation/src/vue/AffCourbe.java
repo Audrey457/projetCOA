@@ -1,9 +1,7 @@
 package vue;
 
 import java.awt.Dimension;
-
 import javax.swing.JPanel;
-
 import model.Ligne;
 import model.SerieToUse;
 import org.jfree.chart.ChartFactory;
@@ -13,6 +11,7 @@ import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.plot.CategoryPlot;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.data.category.DefaultCategoryDataset;
+
 
 public class AffCourbe extends JPanel {
 

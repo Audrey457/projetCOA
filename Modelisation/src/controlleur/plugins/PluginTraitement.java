@@ -1,9 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package controlleur.plugins;
 
 import model.ISerie;
@@ -14,6 +8,13 @@ import model.ISerie;
  */
 public interface PluginTraitement extends PluginBase{
     
-    public double getValue(ISerie serie)throws Exception;
+    /**
+     * Obtient la valeur calculée par le traitement
+     * 
+     * @param serie
+     * @return double
+     * @throws Exception 
+     */
+    public double getValue()throws Exception;
     
 }

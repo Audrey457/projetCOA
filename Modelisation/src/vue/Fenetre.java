@@ -67,8 +67,6 @@ public class Fenetre extends JFrame implements Observer {
     private AffCourbe courbe;
     private boolean doubleAffich;
 
-
-
     public Fenetre(SerieToUse serie, SerieControleur controleur) {
         super();
         this.serie = serie;
@@ -140,6 +138,7 @@ public class Fenetre extends JFrame implements Observer {
                 }
             }
             choixOpe = new JComboBox(textCombo);
+            choixOpe.setEnabled(true);
         }
         choixOpe.setEnabled(false);
     }
@@ -157,7 +156,6 @@ public class Fenetre extends JFrame implements Observer {
         gauche.setMaximumSize(new Dimension(400, 800));
         gauche.setBorder(BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.BLACK),
                 BorderFactory.createEmptyBorder(10, 10, 10, 10)));
-
 
         // boutons charger donnees depuis CSV, charger donnees depuis URL et plugins
         JPanel hautGauche = new JPanel();
@@ -191,7 +189,6 @@ public class Fenetre extends JFrame implements Observer {
         basGauche.setLayout(new BoxLayout(basGauche, BoxLayout.Y_AXIS));
         basGauche.setPreferredSize(new Dimension(400, 400));
 
-
         // comboBox choix opération
         choixOpe.setAlignmentX(Component.LEFT_ALIGNMENT);
         basGauche.add(Box.createRigidArea(new Dimension(0, 100)));
@@ -199,7 +196,6 @@ public class Fenetre extends JFrame implements Observer {
         basGauche.add(Box.createRigidArea(new Dimension(0, 20)));
         indicParam.setAlignmentX(Component.LEFT_ALIGNMENT);
         basGauche.add(indicParam);
-		
 
         // saisie parametre
         JPanel basGaucheParam = new JPanel();
@@ -324,7 +320,6 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
-
         selectUrl.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
@@ -360,54 +355,58 @@ public class Fenetre extends JFrame implements Observer {
             }
         });
 
-	}
-    
-    private void selectUrlActionPerformed(ActionEvent e){
+    }
+
+    private void selectUrlActionPerformed(ActionEvent e) {
         controleur.fixeSerie(urlRessource.getText());
         pileTransfo.clear();
         pileUndo.clear();
         choixOpe.setEnabled(true);
         pileTransfo.add(serie);
     }
-        
-        private void choixAffichTabActionPerformed(ActionEvent e){
-            CardLayout cl = (CardLayout)(affich.getLayout());
-            cl.show(affich, "Tableau");
-            choixNbCourbe.setEnabled(false);
-                
+
+    private void choixAffichTabActionPerformed(ActionEvent e) {
+        CardLayout cl = (CardLayout) (affich.getLayout());
+        cl.show(affich, "Tableau");
+        choixNbCourbe.setEnabled(false);
+
+    }
+
+    private void choixAffichCourbeActionPerformed(ActionEvent e) {
+        CardLayout cl = (CardLayout) (affich.getLayout());
+        cl.show(affich, "Courbe");
+        if (!plugsTransfo.isEmpty() || !plugsTrait.isEmpty()) {
+            choixNbCourbe.setEnabled(true);
         }
-        
-        private void choixAffichCourbeActionPerformed(ActionEvent e){
-            CardLayout cl = (CardLayout)(affich.getLayout());
-            cl.show(affich, "Courbe");
-            if(!plugsTransfo.isEmpty() || !plugsTrait.isEmpty()){
-                choixNbCourbe.setEnabled(true);
-            }
-                
-        }
-        
-    private void choixOpeActionPerformed(ActionEvent e) throws Exception{
-        JComboBox cb = (JComboBox)e.getSource();
+
+    }
+
+    private void choixOpeActionPerformed(ActionEvent e) throws Exception {
+        JComboBox cb = (JComboBox) e.getSource();
         int clicIndex = cb.getSelectedIndex();
+        if (clicIndex <= 0) {
+            return;
+        }
         int taillePlugsTransfo = plugsTransfo.size();
-        if(!this.plugsTrait.isEmpty() || !this.plugsTransfo.isEmpty()){
+        if (!this.plugsTrait.isEmpty() || !this.plugsTransfo.isEmpty()) {
             //on applique une operation qui genere une nouvelle serie
-            if(clicIndex < taillePlugsTransfo){
-                SerieToUse serieTransfo = (SerieToUse)plugsTransfo.get(clicIndex).transform(serie);
+            if (clicIndex < taillePlugsTransfo) {
+                PluginTransformation plugin = plugsTransfo.get(clicIndex);
+                plugin.setSerie(serie);
+                SerieToUse serieTransfo = (SerieToUse) plugin.transform();
                 pileTransfo.add(serieTransfo);
                 //serie.setSerieTransfo(serieTransfo);
-                undo.setEnabled(true); 
-            }
-            //on applique une operation qui genere un seul chiffre et on affiche le resultat dans un pop up
-            else{
-                double resultat = plugsTrait.get(clicIndex - taillePlugsTransfo - 1).getValue(serie);
+                undo.setEnabled(true);
+            } //on applique une operation qui genere un seul chiffre et on affiche le resultat dans un pop up
+            else {
+                PluginTraitement plugin = plugsTrait.get(clicIndex - taillePlugsTransfo - 1);
+                plugin.setSerie(serie);
+                double resultat = plugin.getValue();
                 String message = "Résultat : " + resultat;
                 JOptionPane.showMessageDialog(this, resultat);
             }
         }
     }
-
-
 
     private void chargerPluginActionPerformed(ActionEvent e) throws Exception {
         int retourneVal = fc.showOpenDialog(this);
@@ -415,37 +414,44 @@ public class Fenetre extends JFrame implements Observer {
             PluginsLoader pl = new PluginsLoader(fc.getSelectedFile().getPath());
             plugsTransfo.addAll(pl.loadAllTransformPlugins());
             plugsTrait.addAll(pl.loadAllTreatmentPlugins());
+            System.out.println("action chargé plugin fait");
+            this.updateChoixOpe();
         }
+    }
 
+    private void updateChoixOpe() {
         int i = 1;
         textCombo = new String[plugsTransfo.size() + plugsTrait.size() + 1];
         textCombo[0] = "Choisir opération : ";
-        boolean tranfoEmpty, traitEmpty;
-        tranfoEmpty = plugsTransfo.isEmpty();
-        traitEmpty = plugsTrait.isEmpty();
-        if (!tranfoEmpty) {
+
+        if (!plugsTransfo.isEmpty()) {
             for (PluginTransformation p : plugsTransfo) {
                 textCombo[i] = p.getLibelle();
                 i++;
             }
         }
-        if (!traitEmpty) {
+        if (!plugsTrait.isEmpty()) {
             for (PluginTraitement p : plugsTrait) {
                 textCombo[i] = p.getLibelle();
                 i++;
             }
         }
-        choixOpe = new JComboBox(textCombo);
+        choixOpe.removeAllItems();
+
+        for (String elt : textCombo) {
+            choixOpe.addItem(elt);
+        }
+
+        choixOpe.setEnabled(true);
     }
 
-
-	@Override
-	public void update(Observable arg0, Object arg1) {
-		if (arg1.equals("serieChange")) {
-			serie.fireTableStructureChanged();
-			courbe.majCourbe();
-		}
+    @Override
+    public void update(Observable arg0, Object arg1) {
+        if (arg1.equals("serieChange")) {
+            serie.fireTableStructureChanged();
+            courbe.majCourbe();
         }
+    }
 
     private void chargerDonneesActionPerformed(ActionEvent e) {
         int retourneVal = fc.showOpenDialog(this);
@@ -455,19 +461,18 @@ public class Fenetre extends JFrame implements Observer {
             pileUndo.clear();
             choixOpe.setEnabled(true);
             pileTransfo.add(serie);
-        } 
+        }
     }
 
     private void choixNbCourbeActionPerformed(ActionEvent e) {
-        if(doubleAffich == false){
+        if (doubleAffich == false) {
             choixNbCourbe.setText("Superposer les 2 courbes");
             doubleAffich = true;
-        }
-        else{
+        } else {
             choixNbCourbe.setText("Afficher uniquement la serie transformée");
             doubleAffich = false;
         }
-        
+
     }
 
     private void chargerEssai() {
