@@ -21,11 +21,11 @@ public class Ligne {
         this.valDate = valDate;
     }
 
-    public double getValeur() {
+    public Double getValeur() {
         return valeur;
     }
 
-    public void setValeur(double valeur) {
+    public void setValeur(Double valeur) {
         this.valeur = valeur;
     }
 }
