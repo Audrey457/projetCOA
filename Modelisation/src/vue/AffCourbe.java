@@ -30,7 +30,7 @@ public class AffCourbe extends JPanel {
 		this.serie = serie;
 		final JFreeChart chart = createChart(dataset);
 		final ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new Dimension(1000, 500));
+		chartPanel.setPreferredSize(new Dimension(1050, 500));
 		this.add(chartPanel);
 	}
 
